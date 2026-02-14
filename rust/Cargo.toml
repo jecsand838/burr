@@ -1,0 +1,27 @@
+[workspace]
+resolver = "2"
+
+# Members will be added incrementally by the Codex prompt sequence.
+# Keep this list stable and alphabetized.
+members = [
+  # "crates/burr-normalizer",
+  # "crates/burr-golden-runner",
+  # "crates/burr-core",
+  # "crates/burr-runtime",
+  # "crates/burr-lifecycle",
+  # "crates/burr-tracking",
+  # "crates/burr-persistence",
+  # "crates/burr-typing",
+  # "crates/burr-telemetry",
+  # "crates/burr-server",
+  # "crates/burr-cli",
+]
+
+[workspace.package]
+edition = "2021"
+license = "Apache-2.0"
+publish = false
+
+# NOTE: we intentionally avoid setting a workspace-level rust-version here.
+# Some crates (e.g. jsonschema) may raise the MSRV; we keep that decision local
+# to the crates that actually need it.
