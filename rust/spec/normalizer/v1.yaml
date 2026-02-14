@@ -1,0 +1,57 @@
+# Burr golden normalizer base config
+normalizer_version: burr.normalizer/v1
+
+# Selection language for selectors in rules
+jsonpath_dialect: rfc9535
+
+output:
+  canonicalization: rfc8785
+  pretty: false
+
+# Rules are applied in order. Most rules use selectors: ["$"] and traverse recursively.
+rules:
+  - id: slashify_backslashes
+    op: replace_regex
+    selectors: ["$"]
+    args:
+      pattern: "\\"
+      replacement: "/"
+
+  - id: replace_run_paths
+    op: replace_prefixes_from_report
+    selectors: ["$"]
+    args:
+      # These JSONPath expressions are evaluated against the run_report being normalized.
+      # The op should build a longest-prefix-first map and rewrite any string occurrences.
+      prefixes:
+        - path: "$.environment.paths.run_dir"
+          token: "<RUN_DIR>"
+        - path: "$.environment.paths.repo_root"
+          token: "<REPO_ROOT>"
+        - path: "$.environment.paths.home_dir"
+          token: "<HOME_DIR>"
+        - path: "$.environment.paths.temp_dir"
+          token: "<TEMP_DIR>"
+
+  - id: normalize_uuids
+    op: uuid_map
+    selectors: ["$"]
+
+  - id: normalize_timestamps
+    op: timestamp_map
+    selectors: ["$"]
+
+  - id: redact_host_user_bits
+    op: redact
+    selectors:
+      - "$.environment.os.hostname"
+      - "$.environment.os.username"
+      - "$.environment.python.executable"
+      - "$.environment.rust.executable"
+    args:
+      value: "<REDACTED>"
+
+  # Scenario-local overrides commonly add sort_array rules for nondeterministic arrays (e.g. tracking log entries).
+  - id: canonicalize_json
+    op: canonicalize_json
+    selectors: ["$"]

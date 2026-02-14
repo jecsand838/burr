@@ -1,0 +1,163 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://apache.org/burr/spec/normalizer.schema.json",
+  "title": "Burr golden normalizer config (burr.normalizer/v1)",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "normalizer_version",
+    "jsonpath_dialect",
+    "output",
+    "rules"
+  ],
+  "properties": {
+    "normalizer_version": {
+      "type": "string",
+      "const": "burr.normalizer/v1"
+    },
+    "jsonpath_dialect": {
+      "type": "string",
+      "enum": [
+        "rfc9535"
+      ]
+    },
+    "output": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "canonicalization"
+      ],
+      "properties": {
+        "canonicalization": {
+          "type": "string",
+          "enum": [
+            "rfc8785",
+            "none"
+          ]
+        },
+        "pretty": {
+          "type": "boolean",
+          "default": false
+        }
+      }
+    },
+    "rules": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/Rule"
+      }
+    }
+  },
+  "$defs": {
+    "Rule": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "id",
+        "op",
+        "selectors"
+      ],
+      "properties": {
+        "id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "op": {
+          "type": "string",
+          "minLength": 1
+        },
+        "selectors": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "type": "string",
+            "minLength": 1
+          }
+        },
+        "when": {
+          "type": "object"
+        },
+        "args": {
+          "type": "object"
+        }
+      }
+    },
+    "Override": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "override_version"
+      ],
+      "properties": {
+        "override_version": {
+          "type": "string",
+          "const": "burr.normalizer_override/v1"
+        },
+        "disable_rules": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "replace_rules": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/Rule"
+          }
+        },
+        "add_rules": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "position",
+              "rule"
+            ],
+            "properties": {
+              "position": {
+                "type": "object",
+                "additionalProperties": false,
+                "required": [
+                  "kind",
+                  "id"
+                ],
+                "properties": {
+                  "kind": {
+                    "type": "string",
+                    "enum": [
+                      "before",
+                      "after"
+                    ]
+                  },
+                  "id": {
+                    "type": "string"
+                  }
+                }
+              },
+              "rule": {
+                "$ref": "#/$defs/Rule"
+              }
+            }
+          }
+        },
+        "output_override": {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "canonicalization": {
+              "type": "string",
+              "enum": [
+                "rfc8785",
+                "none"
+              ]
+            },
+            "pretty": {
+              "type": "boolean"
+            }
+          }
+        }
+      }
+    }
+  }
+}

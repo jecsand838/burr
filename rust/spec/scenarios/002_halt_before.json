@@ -1,0 +1,64 @@
+{
+  "spec_version": "burr.scenario/v1",
+  "scenario_id": "002_halt_before",
+  "name": "Run() halts before inc executes",
+  "identifiers": {
+    "app_id": "00000000-0000-0000-0000-000000000002",
+    "partition_key": "starterpack"
+  },
+  "initial_state": {},
+  "graph": {
+    "entrypoint": "init",
+    "actions": {
+      "init": {
+        "type": "set",
+        "updates": {
+          "counter": 0
+        }
+      },
+      "inc": {
+        "type": "increment",
+        "field": "counter",
+        "by": 1
+      },
+      "done": {
+        "type": "noop"
+      }
+    },
+    "transitions": [
+      {
+        "from": "init",
+        "to": "inc",
+        "condition": {
+          "type": "default"
+        }
+      },
+      {
+        "from": "inc",
+        "to": "done",
+        "condition": {
+          "type": "when",
+          "equals": {
+            "counter": 3
+          }
+        }
+      },
+      {
+        "from": "inc",
+        "to": "inc",
+        "condition": {
+          "type": "default"
+        }
+      }
+    ]
+  },
+  "calls": [
+    {
+      "op": "run",
+      "halt_before": [
+        "inc"
+      ],
+      "inputs": {}
+    }
+  ]
+}

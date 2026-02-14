@@ -1,0 +1,46 @@
+{
+  "spec_version": "burr.scenario/v1",
+  "scenario_id": "004_stream_chunks",
+  "name": "stream_result() on a streaming action that yields chunks then a final state update",
+  "identifiers": {
+    "app_id": "00000000-0000-0000-0000-000000000004",
+    "partition_key": "starterpack"
+  },
+  "initial_state": {},
+  "graph": {
+    "entrypoint": "stream",
+    "actions": {
+      "stream": {
+        "type": "stream_chunks",
+        "out_field": "response",
+        "chunks": [
+          "Hello",
+          ", ",
+          "Burr",
+          "!"
+        ]
+      },
+      "done": {
+        "type": "noop"
+      }
+    },
+    "transitions": [
+      {
+        "from": "stream",
+        "to": "done",
+        "condition": {
+          "type": "default"
+        }
+      }
+    ]
+  },
+  "calls": [
+    {
+      "op": "stream_result",
+      "halt_after": [
+        "stream"
+      ],
+      "inputs": {}
+    }
+  ]
+}
